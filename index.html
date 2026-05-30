@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PasteGrid - local text to table cleaner</title>
+    <meta
+      name="description"
+      content="Turn messy pasted notes, CSV, links, and task snippets into a clean table, CSV, Markdown, or JSON in the browser."
+    >
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Local-first utility</p>
+        <h1>PasteGrid</h1>
+      </div>
+      <div class="stat-strip" aria-label="Current table statistics">
+        <span><strong id="rowCount">0</strong> rows</span>
+        <span><strong id="columnCount">0</strong> columns</span>
+        <span id="sourceType">auto</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel input-panel" aria-labelledby="inputTitle">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Input</p>
+            <h2 id="inputTitle">Messy paste</h2>
+          </div>
+          <div class="sample-actions" aria-label="Sample inputs">
+            <button type="button" data-sample="inbox">Ops</button>
+            <button type="button" data-sample="leads">Leads</button>
+            <button type="button" data-sample="reading">Links</button>
+          </div>
+        </div>
+
+        <textarea id="sourceInput" spellcheck="false" data-testid="source-input"></textarea>
+
+        <div class="toolbar">
+          <label>
+            Mode
+            <select id="mode" data-testid="mode-select">
+              <option value="auto">Auto</option>
+              <option value="lines">Loose lines</option>
+              <option value="comma">CSV</option>
+              <option value="tab">TSV</option>
+              <option value="pipe">Pipe</option>
+              <option value="semicolon">Semicolon</option>
+            </select>
+          </label>
+          <label class="checkline">
+            <input id="firstRowHeader" type="checkbox">
+            Header row
+          </label>
+          <button id="cleanButton" class="primary" type="button" data-testid="clean-button">Clean table</button>
+          <button id="resetButton" type="button">Reset</button>
+        </div>
+      </section>
+
+      <section class="panel output-panel" aria-labelledby="outputTitle">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Output</p>
+            <h2 id="outputTitle">Structured result</h2>
+          </div>
+          <p id="summary" class="summary" data-testid="summary">0 rows</p>
+        </div>
+
+        <ul id="warningList" class="warning-list" aria-live="polite"></ul>
+
+        <div class="table-wrap" data-testid="table-wrap">
+          <table>
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="output-toolbar">
+          <div class="tabs" role="tablist" aria-label="Output format">
+            <button type="button" class="is-active" data-format="csv">CSV</button>
+            <button type="button" data-format="markdown">Markdown</button>
+            <button type="button" data-format="json">JSON</button>
+          </div>
+          <div class="output-actions">
+            <button id="copyButton" type="button" data-testid="copy-button">Copy</button>
+            <button id="downloadButton" type="button">Download</button>
+          </div>
+        </div>
+        <textarea id="outputText" class="output-text" readonly data-testid="output-text"></textarea>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

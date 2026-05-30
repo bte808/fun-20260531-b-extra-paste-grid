@@ -1,0 +1,21 @@
+{
+  "name": "fun-20260531-b-extra-paste-grid",
+  "version": "1.0.0",
+  "description": "Local-first messy text to clean table utility.",
+  "type": "module",
+  "private": false,
+  "scripts": {
+    "test": "node scripts/verify.mjs",
+    "verify:browser": "node scripts/verify-browser.mjs",
+    "serve": "python3 -m http.server 5178"
+  },
+  "keywords": [
+    "local-first",
+    "csv",
+    "markdown",
+    "data-cleaning",
+    "productivity",
+    "static-site"
+  ],
+  "license": "MIT"
+}
