@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   SAMPLE_INPUTS,
   parseInput,
+  resultToBrief,
   rowsToCsv,
   rowsToJson,
   rowsToMarkdown,
@@ -26,7 +27,9 @@ const [html, app, styles, readme, license, pkg] = await Promise.all([
 
 assert.match(html, /<script type="module" src="\.\/app\.js"><\/script>/);
 assert.match(html, /data-testid="source-input"/);
+assert.match(html, /data-testid="brief-button"/);
 assert.match(app, /parseInput/);
+assert.match(app, /resultToBrief/);
 assert.match(styles, /@media \(max-width: 860px\)/);
 assert.match(readme, /PasteGrid/);
 assert.match(license, /MIT License/);
@@ -41,6 +44,9 @@ assert.match(rowsToCsv(loose.columns, loose.rows), /Mina/);
 assert.match(rowsToMarkdown(loose.columns, loose.rows), /\| Item \|/);
 assert.doesNotThrow(() => JSON.parse(rowsToJson(loose.columns, loose.rows)));
 assert.match(summarizeResult(loose), /4 rows/);
+assert.match(resultToBrief(loose), /PasteGrid cleaned 4 rows into \d+ columns from loose lines/);
+assert.match(resultToBrief(loose), /Fields: .*Owner.*Date.*Status/);
+assert.match(resultToBrief(loose), /Ready to paste as CSV, Markdown, or JSON/);
 
 const delimited = parseInput(SAMPLE_INPUTS.leads);
 assert.equal(delimited.rows.length, 3);

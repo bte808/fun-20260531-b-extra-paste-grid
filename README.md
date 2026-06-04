@@ -2,6 +2,8 @@
 
 PasteGrid turns messy copied text into a clean table you can copy as CSV, Markdown, or JSON. It runs fully in the browser and has no build step, account, tracking, or network dependency.
 
+Live demo: <https://bte808.github.io/fun-20260531-b-extra-paste-grid/>
+
 ## Why this exists
 
 Small teams keep losing time between chat notes, link dumps, task lists, spreadsheet rows, and issue descriptions. Recent public product launches keep circling the same need: less app switching, faster lightweight spreadsheets, and cleaner structure from messy input. PasteGrid keeps that workflow local and simple.
@@ -21,6 +23,7 @@ Only the idea shape was borrowed. The code, UI, sample data, and copy in this re
 - Extract common fields from loose text: item, owner, email, date, amount, URL, status, tags, and note.
 - Preview the result as a table.
 - Copy or download CSV, Markdown, or JSON.
+- Copy a plain-language cleanup brief for issue comments, handoffs, and quick review notes.
 - Keep the last local input in `localStorage` for quick retry.
 
 ## Why it is useful
@@ -31,6 +34,7 @@ PasteGrid is for the awkward moment before data becomes a spreadsheet, GitHub is
 
 - Local-first and dependency-free.
 - One page, one job, no setup.
+- Copyable brief makes the cleaned result easy to explain before sharing the table.
 - Useful for operators, students, support teams, founders, and developers.
 - Easy to fork because the parser is isolated in `src/pastegrid-core.js`.
 - Works as a static GitHub Pages site.
@@ -74,7 +78,7 @@ Because the app is static, you can also serve it with any local static server.
 2. Keep `Auto` mode, or force CSV/TSV/Pipe/Semicolon/Loose lines.
 3. Click `Clean table`.
 4. Pick CSV, Markdown, or JSON.
-5. Copy or download the result.
+5. Copy or download the result, or click `Copy brief` to share a short summary of what PasteGrid detected.
 
 ## Verification
 

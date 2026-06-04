@@ -138,6 +138,26 @@ export function rowsToJson(columns, rows) {
   return JSON.stringify(normalized, null, 2);
 }
 
+export function resultToBrief(result) {
+  const columns = result?.columns || [];
+  const rows = result?.rows || [];
+  const warnings = result?.warnings || [];
+  const rowCount = rows.length;
+  const columnCount = columns.length;
+  const rowLabel = rowCount === 1 ? "row" : "rows";
+  const columnLabel = columnCount === 1 ? "column" : "columns";
+  const fields = columns.length ? columns.map(titleize).join(", ") : "none";
+  const sourceType = result?.sourceType || "input";
+  const warningText = warnings.length ? warnings.join(" ") : "No warnings.";
+
+  return [
+    `PasteGrid cleaned ${rowCount} ${rowLabel} into ${columnCount} ${columnLabel} from ${sourceType}.`,
+    `Fields: ${fields}.`,
+    `Warnings: ${warningText}`,
+    "Ready to paste as CSV, Markdown, or JSON."
+  ].join("\n");
+}
+
 export function summarizeResult(result) {
   if (!result.rows.length) {
     return "0 rows";

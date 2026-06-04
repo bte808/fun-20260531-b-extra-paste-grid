@@ -1,6 +1,7 @@
 import {
   SAMPLE_INPUTS,
   parseInput,
+  resultToBrief,
   rowsToCsv,
   rowsToJson,
   rowsToMarkdown,
@@ -26,6 +27,7 @@ const els = {
   tableBody: document.querySelector("#tableBody"),
   output: document.querySelector("#outputText"),
   copy: document.querySelector("#copyButton"),
+  brief: document.querySelector("#briefButton"),
   download: document.querySelector("#downloadButton"),
   tabs: document.querySelectorAll("[data-format]"),
   sourceType: document.querySelector("#sourceType"),
@@ -66,6 +68,7 @@ function bindEvents() {
     });
   });
   els.copy.addEventListener("click", copyOutput);
+  els.brief.addEventListener("click", copyBrief);
   els.download.addEventListener("click", downloadOutput);
 }
 
@@ -162,14 +165,49 @@ function renderOutput() {
 }
 
 async function copyOutput() {
+  await copyText(els.output.value, els.copy, els.output);
+}
+
+async function copyBrief() {
+  if (!state.result) return;
+  await copyText(resultToBrief(state.result), els.brief);
+}
+
+async function copyText(text, button, fallbackElement) {
   try {
-    await navigator.clipboard.writeText(els.output.value);
-    flashButton(els.copy, "Copied");
+    await writeClipboard(text);
   } catch {
-    els.output.select();
+    const target = fallbackElement || makeTemporaryCopyTarget(text);
+    target.select();
     document.execCommand("copy");
-    flashButton(els.copy, "Copied");
+    if (!fallbackElement) {
+      target.remove();
+    }
   }
+  flashButton(button, "Copied");
+}
+
+function writeClipboard(text) {
+  if (!navigator.clipboard?.writeText) {
+    return Promise.reject(new Error("Clipboard API unavailable"));
+  }
+  return Promise.race([
+    navigator.clipboard.writeText(text),
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Clipboard write timed out")), 400);
+    })
+  ]);
+}
+
+function makeTemporaryCopyTarget(text) {
+  const target = document.createElement("textarea");
+  target.value = text;
+  target.setAttribute("readonly", "");
+  target.style.position = "fixed";
+  target.style.inset = "0 auto auto 0";
+  target.style.opacity = "0";
+  document.body.append(target);
+  return target;
 }
 
 function downloadOutput() {

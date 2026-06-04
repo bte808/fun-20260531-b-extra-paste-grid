@@ -165,25 +165,37 @@ async function runViewportCheck(cdp, viewport) {
   const details = await evaluate(
     cdp,
     sessionId,
-    `(() => {
+    `(async () => {
       const sample = document.querySelector('[data-sample="leads"]');
       sample.click();
       document.querySelector('[data-format="markdown"]').click();
       const cleanButton = document.querySelector('[data-testid="clean-button"]');
       const copyButton = document.querySelector('[data-testid="copy-button"]');
+      const briefButton = document.querySelector('[data-testid="brief-button"]');
+      const cleanRectBeforeScroll = cleanButton.getBoundingClientRect();
+      if (${viewport.mobile ? "true" : "false"}) {
+        briefButton.scrollIntoView({ block: 'center' });
+        await new Promise((resolve) => setTimeout(resolve, 80));
+      }
+      briefButton.click();
+      await new Promise((resolve) => setTimeout(resolve, 700));
       const output = document.querySelector('[data-testid="output-text"]').value;
       const tableRows = document.querySelectorAll('#tableBody tr').length;
       const cleanRect = cleanButton.getBoundingClientRect();
       const copyRect = copyButton.getBoundingClientRect();
+      const briefRect = briefButton.getBoundingClientRect();
       return {
         title: document.title,
         summary: document.querySelector('[data-testid="summary"]').textContent,
         rows: tableRows,
         outputHasMarkdown: output.includes('| Item | Email | Plan | Amount | Status |'),
         outputHasLead: output.includes('Acme Ops'),
+        briefCopied: briefButton.textContent.includes('Copied'),
         overflow: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
+        cleanInitiallyVisible: cleanRectBeforeScroll.top >= 0 && cleanRectBeforeScroll.bottom <= window.innerHeight,
         cleanVisible: cleanRect.top >= 0 && cleanRect.bottom <= window.innerHeight,
         copyVisible: copyRect.top >= 0 && copyRect.bottom <= window.innerHeight,
+        briefVisible: briefRect.top >= 0 && briefRect.bottom <= window.innerHeight,
         viewport: { width: window.innerWidth, height: window.innerHeight }
       };
     })()`
@@ -202,8 +214,9 @@ async function runViewportCheck(cdp, viewport) {
     details.rows === 3 &&
     details.outputHasMarkdown &&
     details.outputHasLead &&
+    details.briefCopied &&
     details.overflow <= 1 &&
-    (viewport.mobile ? details.cleanVisible : details.copyVisible);
+    (viewport.mobile ? details.cleanInitiallyVisible && details.briefVisible : details.copyVisible);
 
   await cdp.send("Target.closeTarget", { targetId });
   return { ...details, ok, screenshot };
